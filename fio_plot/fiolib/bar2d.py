@@ -81,7 +81,7 @@ def compchart_2dbarchart_jsonlogdata(settings, dataset):
     """This function is responsible for creating bar charts that compare data."""
 
     dataset_types = shared.get_dataset_types(dataset)
-    pprint.pprint(dataset_types)
+    # pprint.pprint(dataset_types)
 
     data = shared.get_record_set_improved(settings, dataset, dataset_types)
 
@@ -99,17 +99,25 @@ def compchart_2dbarchart_jsonlogdata(settings, dataset):
                  transform=ax1.transAxes, fontsize=9)
 
     ax2.axis('off')
+
+    iops = data['y1_axis']['data']
+    latency = np.array(data['y2_axis']['data'], dtype=float)
+
+#    iops = [100, 200]
+#    latency = [10, 5]
+
     #
     # Creating the bars and chart
-    x_pos = np.arange(0, len(data['x_axis']) * 2, 2)
+    #x_pos = np.arange(1, len(data['x_axis'])+1, 1)
+    x_pos1 = np.arange(1, len(iops) + 1, 1)
+    x_pos2 = np.arange(len(iops) + 1, len(iops) + len(latency) + 1, 1)
+    print(x_pos1)
+    print(x_pos2)
+    # x_pos = np.arange(0, len(data['x_axis']))
     width = 0.9
 
-    n = np.array(data['y2_axis']['data'], dtype=float)
-
-    rects1 = ax1.bar(x_pos, data['y1_axis']['data'], width,
-                     color='#a8ed63')
-    rects2 = ax3.bar(x_pos + width, n, width,
-                     color='#34bafa')
+    rects1 = ax1.bar(x_pos1, iops, width, color='#a8ed63')
+    rects2 = ax3.bar(x_pos2, latency, width, color='#34bafa')
 
     #
     # Configure axis labels and ticks
@@ -117,7 +125,8 @@ def compchart_2dbarchart_jsonlogdata(settings, dataset):
     # ax1.set_xlabel(data['x_axis_format'])
     ax3.set_ylabel(data['y2_axis']['format'])
 
-    ax1.set_xticks(x_pos + width / 2)
+    ltest = np.arange(1, len(data['x_axis'])+1, 1)
+    ax1.set_xticks(ltest)
     ax1.set_xticklabels(data['x_axis'])
     #
     # Set title
@@ -127,14 +136,12 @@ def compchart_2dbarchart_jsonlogdata(settings, dataset):
         supporting.create_title_and_sub(settings, plt, skip_keys=['iodepth'])
     else:
         supporting.create_title_and_sub(
-            settings, plt, skip_keys=['iodepth', 'filter'])
+            settings, plt, skip_keys=[])
     #
     # Labeling the top of the bars with their value
     shared.autolabel(rects1, ax1)
     shared.autolabel(rects2, ax3)
-    #
-    #
-    shared.create_stddev_table(data, ax2)
+
     #
     # Create legend
     ax2.legend((rects1[0], rects2[0]),

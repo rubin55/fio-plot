@@ -4,6 +4,20 @@ import json
 import pprint
 
 
+def filter_json_files(settings, filename):
+    """ Filter the json files to only those we need.
+    My ambition is to learn to program and do this right one day.
+    """
+
+    basename = os.path.basename(filename)
+    splitone = str.split(basename, '.')
+    split = str.split(splitone[0], '-')
+    iodepth = int(split[1])
+    numjobs = int(split[2])
+    if iodepth in settings['iodepth'] and numjobs in settings['iodepth']:
+        return filename
+
+
 def list_json_files(settings):
     """List all JSON files that maches the command line settings."""
     json_files = []
@@ -19,6 +33,12 @@ def list_json_files(settings):
         json_files.append(dict_structure)
 
     for item in json_files:
+        file_list = []
+        for f in item['files']:
+            result = filter_json_files(settings, f)
+            if result:
+                file_list.append(result)
+        item['files'] = file_list
         if not item['files']:
             print(
                 "Could not find any (matching) JSON files in the specified directory " + str(absolute_dir))
