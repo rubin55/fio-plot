@@ -60,6 +60,8 @@ def set_arguments():
             Generates a latency histogram for a particular queue depth and numjobs value.")
     exclusive_group.add_argument("-g", "--loggraph", action='store_true',
                                  help="This option generates a 2D graph of the log data recorded by FIO.")
+    exclusive_group.add_argument("-C", "--compare-graph", action='store_true',
+                                 help="This option generates a bar chart to compare results from different benchmark runs.")
 
     ag.add_argument("--disable-grid", action='store_true', help="\
             Disables the dotted grid in the output graph.")
@@ -100,7 +102,9 @@ def set_arguments():
             filter should be read/write.", type=str, default=('read', 'write'),
                     choices=['read', 'write'])
     ag.add_argument("-c", "--label-depth", help="\
-            use the parent folder(s) to make the label unique. The number represents how many folders up should be included. Used with -g.", type=int, default=1)
+            use the parent folder(s) to make the label unique. The number represents how many folders up should be included.", type=int, default=1)
+    ag.add_argument("--label-include-parent", help="Do we include the folder containing the files into the label or do we start higer?",
+                    action='store_true')
     ag.add_argument("--label-segment-size", help="\
             Truncate folder names to make labels fit the graph. Disabled by default. The number represents how many characters per segment are preserved. Used with -g.", type=int, default=1000)
     ag.add_argument("-w", "--line-width",
@@ -129,7 +133,8 @@ def main():
     settings = {}
     uses_json_files = {'iodepth_numjobs_3d': bar3d.plot_3d, 'latency_iops_2d':
                        bar2d.chart_2dbarchart_jsonlogdata,
-                       'histogram': histogram.chart_latency_histogram}
+                       'histogram': histogram.chart_latency_histogram
+                       }
     parser = set_arguments()
     try:
         args = parser.parse_args()
@@ -167,9 +172,16 @@ def main():
             uses_json_files[item](settings, parsed_data)
             option_found = True
 
+    if settings['compare_graph']:
+        list_of_json_files = jsonimport.list_json_files(settings)
+        dataset = jsonimport.import_json_dataset(list_of_json_files)
+        parsed_data = jsonimport.get_flat_json_mapping(settings, dataset)
+        bar2d.compchart_2dbarchart_jsonlogdata(settings, parsed_data)
+        option_found = True
+
     if not option_found:
         parser.print_help()
-        print("Specify -g, -l, -L or -H")
+        print("Specify -g, -l, -L, -C or -H")
         exit(1)
     else:
         exit(0)
