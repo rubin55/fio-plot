@@ -11,9 +11,8 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
     """This function is responsible for drawing iops/latency bars for a
     particular iodepth."""
     dataset_types = shared.get_dataset_types(dataset)
-    data = shared.get_record_set(settings, dataset, dataset_types,
-                                 settings['rw'], settings['numjobs'])
-
+    data = shared.get_record_set(settings, dataset, dataset_types)
+    pprint.pprint(data)
     fig, (ax1, ax2) = plt.subplots(
         nrows=2, gridspec_kw={'height_ratios': [7, 1]})
     ax3 = ax1.twinx()
@@ -26,26 +25,30 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
                  transform=ax1.transAxes, fontsize=9)
 
     ax2.axis('off')
+    iops = data['y1_axis']['data']
+    latency = np.array(data['y2_axis']['data'], dtype=float)
+
     #
     # Creating the bars and chart
-    x_pos = np.arange(0, len(data['x_axis']) * 2, 2)
+    x_pos1 = np.arange(1, len(iops) + 1, 1)
+    x_pos2 = np.arange(len(iops) + 1, len(iops) + len(latency) + 1, 1)
+    # x_pos = np.arange(0, len(data['x_axis']))
     width = 0.9
 
-    n = np.array(data['y2_axis']['data'], dtype=float)
-
-    rects1 = ax1.bar(x_pos, data['y1_axis']['data'], width,
-                     color='#a8ed63')
-    rects2 = ax3.bar(x_pos + width, n, width,
-                     color='#34bafa')
+    rects1 = ax1.bar(x_pos1, iops, width, color='#a8ed63')
+    rects2 = ax3.bar(x_pos2, latency, width, color='#34bafa')
 
     #
     # Configure axis labels and ticks
     ax1.set_ylabel(data['y1_axis']['format'])
-    ax1.set_xlabel(data['x_axis_format'])
+    # ax1.set_xlabel(data['x_axis_format'])
     ax3.set_ylabel(data['y2_axis']['format'])
 
-    ax1.set_xticks(x_pos + width / 2)
-    ax1.set_xticklabels(data['x_axis'])
+    x_axis = data['x_axis'] * 2
+    ltest = np.arange(1, len(x_axis)+1, 1)
+    ax1.set_xticks(ltest)
+    ax1.set_xticklabels(x_axis)
+
     #
     # Set title
     settings['type'] = ""
@@ -61,6 +64,7 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
     shared.autolabel(rects2, ax3)
     #
     #
+    data['x_axis'] = data['x_axis']
     shared.create_stddev_table(data, ax2)
     #
     # Create legend
@@ -103,16 +107,10 @@ def compchart_2dbarchart_jsonlogdata(settings, dataset):
     iops = data['y1_axis']['data']
     latency = np.array(data['y2_axis']['data'], dtype=float)
 
-#    iops = [100, 200]
-#    latency = [10, 5]
-
     #
     # Creating the bars and chart
-    #x_pos = np.arange(1, len(data['x_axis'])+1, 1)
     x_pos1 = np.arange(1, len(iops) + 1, 1)
     x_pos2 = np.arange(len(iops) + 1, len(iops) + len(latency) + 1, 1)
-    print(x_pos1)
-    print(x_pos2)
     # x_pos = np.arange(0, len(data['x_axis']))
     width = 0.9
 
@@ -125,9 +123,12 @@ def compchart_2dbarchart_jsonlogdata(settings, dataset):
     # ax1.set_xlabel(data['x_axis_format'])
     ax3.set_ylabel(data['y2_axis']['format'])
 
-    ltest = np.arange(1, len(data['x_axis'])+1, 1)
+    # We need the X-axis values twice, for both IOPs and latency
+    x_axis = data['x_axis'] * 2
+
+    ltest = np.arange(1, len(x_axis)+1, 1)
     ax1.set_xticks(ltest)
-    ax1.set_xticklabels(data['x_axis'])
+    ax1.set_xticklabels(x_axis)
     #
     # Set title
     settings['type'] = ""

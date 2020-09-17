@@ -81,9 +81,6 @@ def get_record_set_improved(settings, dataset, dataset_types):
             record['directory'], settings)
         labels.append(record['label'])
 
-    print(len(settings['input_directory']))
-    labels = labels * 2
-
     record_set = {'x_axis': labels, 'y1_axis': None,
                   'y2_axis': None}
 
@@ -159,17 +156,24 @@ def get_record_set_improved(settings, dataset, dataset_types):
     return record_set
 
 
-def get_record_set(settings, dataset, dataset_types, rw, numjobs):
+def get_record_set(settings, dataset, dataset_types):
     """The supplied dataset, a list of flat dictionaries with data is filtered based
     on the parameters as set by the command line. The filtered data is also scaled and rounded.
     """
+    dataset = dataset[0]
+
+    rw = settings['rw']
+    numjobs = settings['numjobs']
+
     if settings['rw'] == 'randrw':
         if len(settings['filter']) > 1 or not settings['filter']:
             print(
                 "Since we are processing randrw data, you must specify a filter for either read or write data, not both.")
             exit(1)
 
-    record_set = {'x_axis': dataset_types['iodepth'], 'x_axis_format': 'Queue Depth', 'y1_axis': None,
+    labels = dataset_types['iodepth']
+
+    record_set = {'x_axis': labels, 'x_axis_format': 'Queue Depth', 'y1_axis': None,
                   'y2_axis': None, 'numjobs': numjobs}
 
     iops_series_raw = []
@@ -177,14 +181,17 @@ def get_record_set(settings, dataset, dataset_types, rw, numjobs):
     lat_series_raw = []
     lat_stddev_series_raw = []
 
+    print(dataset.keys())
+    print(settings)
+
     for depth in dataset_types['iodepth']:
-        for record in dataset:
+        for record in dataset['data']:
             if (int(record['iodepth']) == int(depth)) and int(record['numjobs']) == int(numjobs[0]) and record['rw'] == rw and record['type'] in settings['filter']:
                 iops_series_raw.append(record['iops'])
                 lat_series_raw.append(record['lat'])
                 iops_stddev_series_raw.append(record['iops_stddev'])
                 lat_stddev_series_raw.append(record['lat_stddev'])
-    #
+
     # Latency data must be scaled, IOPs will not be scaled.
     #
     latency_scale_factor = supporting.get_scale_factor(lat_series_raw)
