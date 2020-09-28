@@ -69,20 +69,20 @@ def set_arguments():
             Enable markers for the plot lines when graphing log data.")
     ag.add_argument("--subtitle", help="\
             Specify your own subtitle or leave it blank with double quotes.", type=str, default=None)
-    ag.add_argument("-d", "--iodepth", type=int, nargs='+', default=[1], help="\
+    ag.add_argument("-d", "--iodepth", type=int, nargs='+', default=None, help="\
             The I/O queue depth to graph. You can specify multiple values separated by spaces.")
+    ag.add_argument("-n", "--numjobs", nargs='+', help="\
+            Specifies for which numjob parameter you want the 2d graphs to be\
+                 generated. You can specify multiple values separated by spaces.", default=None, type=int)
     ag.add_argument("-M", "--maxdepth", nargs='?', default=64, type=int, help="\
             Maximum queue depth to graph in 3D graph.")
+    ag.add_argument("-J", "--maxjobs", help="\
+            Maximum number of jobs to graph in 3D graph.", nargs='?', default=64, type=int)
     ag.add_argument("-D", "--dpi", help="\
             The chart will be saved with this DPI setting. Higher means larger\
                      image.", nargs='?', default=200, type=int)
     ag.add_argument("-p", "--percentile", help="\
             Calculate the percentile, default 99.99th.", nargs='?', default=99.99, type=float)
-    ag.add_argument("-J", "--maxjobs", help="\
-            Maximum number of jobs to graph in 3D graph.", nargs='?', default=64, type=int)
-    ag.add_argument("-n", "--numjobs", nargs='+', help="\
-            Specifies for which numjob parameter you want the 2d graphs to be\
-                 generated. You can specify multiple values separated by spaces.", default=[1], type=int)
     ag.add_argument("-r", "--rw", choices=['read', 'write', 'randread', 'randwrite', 'randrw',
                                            'trim', 'rw', 'randtrim', 'trimwrite'], required=True,
                     help="Specifies the kind of data you want to graph.")
@@ -164,12 +164,33 @@ def run_preflight_checks(settings):
             sys.exit(1)
 
 
+def configure_default_settings(settings, uses_json_files, key):
+    if not settings['iodepth']:
+        settings['iodepth'] = uses_json_files[key]['iodepth_default']
+    if not settings['numjobs']:
+        settings['numjobs'] = uses_json_files[key]['numjobs_default']
+    return settings
+
+
 def main():
     settings = {}
-    uses_json_files = {'iodepth_numjobs_3d': bar3d.plot_3d,
-                       'latency_iops_2d': bar2d.chart_2dbarchart_jsonlogdata,
-                       'histogram': histogram.chart_latency_histogram,
-                       'compare_graph': bar2d.compchart_2dbarchart_jsonlogdata
+
+    uses_json_files = {'iodepth_numjobs_3d':
+                       {'function': bar3d.plot_3d,
+                        'iodepth_default': [1, 2, 4, 8, 16, 32, 64],
+                        'numjobs_default': [1, 2, 4, 8, 16, 32, 64]},
+                       'latency_iops_2d':
+                       {'function': bar2d.chart_2dbarchart_jsonlogdata,
+                        'iodepth_default': [1, 2, 4, 8, 16, 32, 64],
+                        'numjobs_default': [1]},
+                       'histogram':
+                       {'function': histogram.chart_latency_histogram,
+                        'iodepth_default': [1],
+                        'numjobs_default': [1]},
+                       'compare_graph':
+                       {'function': bar2d.compchart_2dbarchart_jsonlogdata,
+                        'iodepth_default': [1],
+                        'numjobs_default': [1]}
                        }
 
     parser = set_arguments()
@@ -188,12 +209,18 @@ def main():
     run_preflight_checks(settings)
 
     option_found = False
+
     if settings['loggraph']:
+        if not settings['iodepth']:
+            settings['iodepth'] = [1]
+        if not settings['numjobs']:
+            settings['numjobs'] = [1]
+
         benchmarkfiles = []
         for input_dir in settings['input_directory']:
             benchmarkfiles.extend(logdata.list_fio_log_files(input_dir))
         logfiles = logdata.filterLogFiles(settings, benchmarkfiles)
-        # pprint.pprint(logfiles)
+        pprint.pprint(logfiles)
         rawdata = logdata.readLogDataFromFiles(settings, logfiles)
         # pprint.pprint(rawdata)
         merged = logdata.mergeDataSet(settings, rawdata)
@@ -202,12 +229,14 @@ def main():
 
     for item in uses_json_files.keys():
         if settings[item]:
+            settings = configure_default_settings(
+                settings, uses_json_files, item)
             list_of_json_files = jsonimport.list_json_files(settings)
             # print(list_of_json_files)
             dataset = jsonimport.import_json_dataset(list_of_json_files)
             parsed_data = jsonimport.get_flat_json_mapping(settings, dataset)
             # Which function to execute is specified in 'uses_json_files'
-            uses_json_files[item](settings, parsed_data)
+            uses_json_files[item]['function'](settings, parsed_data)
             option_found = True
 
     if not option_found:

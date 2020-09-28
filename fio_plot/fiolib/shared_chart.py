@@ -186,8 +186,8 @@ def get_record_set(settings, dataset, dataset_types):
     lat_series_raw = []
     lat_stddev_series_raw = []
 
-    print(dataset.keys())
-    print(settings)
+    # print(dataset.keys())
+    # print(settings)
 
     for depth in dataset_types['iodepth']:
         for record in dataset['data']:

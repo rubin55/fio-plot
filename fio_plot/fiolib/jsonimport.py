@@ -8,12 +8,12 @@ def filter_json_files(settings, filename):
     """ Filter the json files to only those we need.
     My ambition is to learn to program and do this right one day.
     """
-
     basename = os.path.basename(filename)
     splitone = str.split(basename, '.')
     split = str.split(splitone[0], '-')
     iodepth = int(split[1])
     numjobs = int(split[2])
+
     if iodepth in settings['iodepth'] and numjobs in settings['numjobs']:
         return filename
 
