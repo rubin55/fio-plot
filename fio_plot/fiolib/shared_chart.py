@@ -38,7 +38,7 @@ def get_record_set_histogram(settings, dataset):
 
     record_set = {'iodepth': iodepth, 'numjobs': numjobs, 'data': None}
 
-    for record in dataset:
+    for record in dataset[0]['data']:
         if (int(record['iodepth']) == iodepth) and (int(record['numjobs']) == numjobs) and record['rw'] == rw:
             record_set['data'] = record
             return record_set

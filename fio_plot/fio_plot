@@ -158,6 +158,11 @@ def run_preflight_checks(settings):
             print("\nIf -l is specified, only one input directory can be used.\n")
             sys.exit(1)
 
+    if settings['histogram']:
+        if len(settings['input_directory']) > 1:
+            print("\nIf -l is specified, only one input directory can be used.\n")
+            sys.exit(1)
+
 
 def main():
     settings = {}
@@ -198,7 +203,7 @@ def main():
     for item in uses_json_files.keys():
         if settings[item]:
             list_of_json_files = jsonimport.list_json_files(settings)
-            print(list_of_json_files)
+            # print(list_of_json_files)
             dataset = jsonimport.import_json_dataset(list_of_json_files)
             parsed_data = jsonimport.get_flat_json_mapping(settings, dataset)
             # Which function to execute is specified in 'uses_json_files'
