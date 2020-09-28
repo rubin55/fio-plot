@@ -167,6 +167,10 @@ Creating a 2D Bar Chart based on randread data and numjobs = 1 (default).
 
     ./fio_plot -i <benchmark_data_folder> -T "Title" -s https://louwrentius.com -l -r randread
 
+![regularbars][regular]
+
+[regular]: https://louwrentius.com/static/images/iodepthregular.png
+
 Creating a 2D Bar Chart based on randread data and numjobs = 8.
 
     ./fio_plot -i <benchmark_data_folder> -T "Title" -s https://louwrentius.com -l -n 8 -r randread
