@@ -198,6 +198,7 @@ def main():
     for item in uses_json_files.keys():
         if settings[item]:
             list_of_json_files = jsonimport.list_json_files(settings)
+            print(list_of_json_files)
             dataset = jsonimport.import_json_dataset(list_of_json_files)
             parsed_data = jsonimport.get_flat_json_mapping(settings, dataset)
             # Which function to execute is specified in 'uses_json_files'

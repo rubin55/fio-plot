@@ -111,7 +111,8 @@ def get_record_set_improved(settings, dataset, dataset_types):
                     lat_series_raw.append(record['lat'])
                     iops_stddev_series_raw.append(record['iops_stddev'])
                     lat_stddev_series_raw.append(record['lat_stddev'])
-        #
+
+    #
     # Latency data must be scaled, IOPs will not be scaled.
     #
     latency_scale_factor = supporting.get_scale_factor(lat_series_raw)

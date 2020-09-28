@@ -14,7 +14,7 @@ def filter_json_files(settings, filename):
     split = str.split(splitone[0], '-')
     iodepth = int(split[1])
     numjobs = int(split[2])
-    if iodepth in settings['iodepth'] and numjobs in settings['iodepth']:
+    if iodepth in settings['iodepth'] and numjobs in settings['numjobs']:
         return filename
 
 
