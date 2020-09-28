@@ -92,14 +92,17 @@ Fio-plot requires 'matplotlib' and 'numpy' to be installed.
 
 Please note that Fio-plot requires at least matplotlib version 3.3.0
 
+Fio-plot also writes metadata to the PNG files using Pillow
+
 ### Usage
 
     usage: fio_plot [-h] -i INPUT_DIRECTORY [INPUT_DIRECTORY ...] -T TITLE [-s SOURCE] (-L | -l | -H | -g)
-                    [--disable-grid] [--enable-markers] [--subtitle SUBTITLE] [-d IODEPTH [IODEPTH ...]] [-M [MAXDEPTH]]
-                    [-D [DPI]] [-p [PERCENTILE]] [-J [MAXJOBS]] [-n NUMJOBS [NUMJOBS ...]] -r
-                    {read,write,randread,randwrite,randrw} [-m MAX] [-y MAX_Y] [-x MIN_Y] [-e MOVING_AVERAGE]
-                    [-t {bw,iops,lat,slat,clat} [{bw,iops,lat,slat,clat} ...]] [-f {read,write} [{read,write} ...]]
-                    [-c LABEL_DEPTH] [--label-segment-size LABEL_SEGMENT_SIZE] [-w LINE_WIDTH]
+                [--disable-grid] [--enable-markers] [--subtitle SUBTITLE] [-d IODEPTH [IODEPTH ...]]
+                [-M [MAXDEPTH]] [-D [DPI]] [-p [PERCENTILE]] [-J [MAXJOBS]] [-n NUMJOBS [NUMJOBS ...]] -r
+                {read,write,randread,randwrite,randrw,trim,rw,randtrim,trimwrite} [-m MAX] [-e MOVING_AVERAGE]
+                [-x MIN_Y] [-t {bw,iops,lat,slat,clat} [{bw,iops,lat,slat,clat} ...]]
+                [-f {read,write} [{read,write} ...]] [-c LABEL_DEPTH] [--label-segment-size LABEL_SEGMENT_SIZE]
+                [-w LINE_WIDTH]
 
     Generates charts/graphs from FIO JSON output or logdata.
 
@@ -114,7 +117,8 @@ Please note that Fio-plot requires at least matplotlib version 3.3.0
     -s SOURCE, --source SOURCE
                             Author
     -L, --iodepth-numjobs-3d
-                            Generates a 3D-chart with iodepth and numjobs on x/y axis and iops or latency on the z-axis.
+                            Generates a 3D-chart with iodepth and numjobs on x/y axis and iops or latency on the
+                            z-axis.
     -l, --latency-iops-2d
                             Generates a 2D barchart of IOPs and latency for a particular queue depth and numjobs value.
     -H, --histogram       Generates a latency histogram for a particular queue depth and numjobs value.
@@ -133,26 +137,27 @@ Please note that Fio-plot requires at least matplotlib version 3.3.0
     -J [MAXJOBS], --maxjobs [MAXJOBS]
                             Maximum number of jobs to graph in 3D graph.
     -n NUMJOBS [NUMJOBS ...], --numjobs NUMJOBS [NUMJOBS ...]
-                            Specifies for which numjob parameter you want the 2d graphs to be generated. You can specify
-                            multiple values separated by spaces.
-    -r {read,write,randread,randwrite,randrw}, --rw {read,write,randread,randwrite,randrw}
+                            Specifies for which numjob parameter you want the 2d graphs to be generated. You can
+                            specify multiple values separated by spaces.
+    -r {read,write,randread,randwrite,randrw,trim,rw,randtrim,trimwrite}, --rw {read,write,randread,randwrite,randrw,trim,rw,randtrim,trimwrite}
                             Specifies the kind of data you want to graph.
     -m MAX, --max MAX     Optional maximum value for Z-axis in 3D graph.
-    
     -e MOVING_AVERAGE, --moving-average MOVING_AVERAGE
-                            The moving average helps to smooth out graphs, the argument is the size of the moving window
-                            (default is None to disable). Be carefull as this setting may smooth out issues you may want
-                            to be aware of.
+                            The moving average helps to smooth out graphs, the argument is the size of the moving
+                            window (default is None to disable). Be carefull as this setting may smooth out issues you
+                            may want to be aware of.
+    -x MIN_Y, --min-y MIN_Y
+                            Optional minimal value for y-axis. Use 'None' to disable.
     -t {bw,iops,lat,slat,clat} [{bw,iops,lat,slat,clat} ...], --type {bw,iops,lat,slat,clat} [{bw,iops,lat,slat,clat} ...]
                             This setting specifies which kind of metric you want to graph.
     -f {read,write} [{read,write} ...], --filter {read,write} [{read,write} ...]
                             filter should be read/write.
     -c LABEL_DEPTH, --label-depth LABEL_DEPTH
-                            use the parent folder(s) to make the label unique. The number represents how many folders up
-                            should be included. Used with -g.
+                            use the parent folder(s) to make the label unique. The number represents how many folders
+                            up should be included. Used with -g.
     --label-segment-size LABEL_SEGMENT_SIZE
-                            Truncate folder names to make labels fit the graph. Disabled by default. The number represents
-                            how many characters per segment are preserved. Used with -g.
+                            Truncate folder names to make labels fit the graph. Disabled by default. The number
+                            represents how many characters per segment are preserved. Used with -g.
     -w LINE_WIDTH, --line-width LINE_WIDTH
                             Line width for line graphs. Can be a floating-point value. Used with -g.
 
@@ -238,3 +243,30 @@ In this example, there are 8 files because numjobs was set to 8. Fio autoamatica
 It's important that - if you don't use the included benchmark script - to make sure files are generated with the appropriate file name structure.
 
 
+### PNG metadata
+
+All settings used to generate the PNG file are incorporated into the PNG file as metadata (tEXT).
+This should help you to keep track of the exact parameters and data used to generate the graphs. 
+This metadata can be viewed with ImageMagick like this: 
+
+    identify -verbose filename.png
+
+This is a fragment of the output: 
+
+    Properties:
+        compare_graph: True
+        date:create: 2020-09-28T16:27:08+00:00
+        date:modify: 2020-09-28T16:27:07+00:00
+        disable_grid: False
+        dpi: 200
+        enable_markers: False
+        filter: ('read', 'write')
+        histogram: False
+        input_directory: /Users/MyUserName/data/WDRAID5/Users/MyUserName/data/WDRAID10
+        iodepth: 16
+        iodepth_numjobs_3d: False
+        latency_iops_2d: False
+        line_width: 1
+        loggraph: False
+        maxdepth: 64
+        maxjobs: 64

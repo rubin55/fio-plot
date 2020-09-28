@@ -81,6 +81,7 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
     savename = f"{title}_{now}.png"
     fig.savefig(savename, dpi=settings['dpi'])
     supporting.write_png_metadata(savename, settings)
+<<<<<<< HEAD
 
 
 def compchart_2dbarchart_jsonlogdata(settings, dataset):
@@ -160,3 +161,5 @@ def compchart_2dbarchart_jsonlogdata(settings, dataset):
     savename = f"{title}_{now}.png"
     fig.savefig(savename, dpi=settings['dpi'])
     supporting.write_png_metadata(savename, settings)
+=======
+>>>>>>> master
