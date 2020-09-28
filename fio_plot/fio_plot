@@ -87,9 +87,6 @@ def set_arguments():
                     help="Specifies the kind of data you want to graph.")
     ag.add_argument("-m", "--max", default=None, type=int,
                     help="Optional maximum value for Z-axis in 3D graph.")
-    ag.add_argument("-y", "--max-y", help="Optional maximum value for y-axis.")
-    ag.add_argument(
-        "-x", "--min-y", help="Optional minimal value for y-axis. Use 'None' to disable.", type=str, default=0)
     ag.add_argument("-e", "--moving-average", default=None, type=int,
                     help="The moving average helps to smooth out graphs,\
                          the argument is the size of the moving window\
@@ -123,6 +120,10 @@ def run_preflight_checks(settings):
         sys.exit(1)
 
     if settings['iodepth_numjobs_3d']:
+        if not settings['type']:
+            print("\nIf -L is specified (3D Chart) you must specify -t (iops or lat)\n")
+            sys.exit(1)
+
         if settings['type'][0] not in ['iops', 'lat']:
             print(
                 "\nIf -L is specified (3D Chart) you can only select [iops,lat] for -t type\n")
