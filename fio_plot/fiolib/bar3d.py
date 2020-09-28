@@ -173,4 +173,4 @@ def plot_3d(settings, dataset):
         str(settings['rw']) + "-" + str(now) + '.png'
     plt.savefig(savename)
     plt.close('all')
-    supporting.write_png_metadata(savename, settings)
+    #supporting.write_png_metadata(savename, settings)

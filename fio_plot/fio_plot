@@ -138,6 +138,10 @@ def run_preflight_checks(settings):
                 "\nIf -L is specified (3D Chart) you can only select [iops,lat] for -t type\n")
             sys.exit(1)
 
+        if len(settings['input_directory']) > 1:
+            print("\nIf -L is specified, only one input directory can be used.\n")
+            sys.exit(1)
+
     if settings['compare_graph']:
         if len(settings['iodepth']) > 1 or len(settings['numjobs']) > 1:
             print(
@@ -157,10 +161,12 @@ def run_preflight_checks(settings):
 
 def main():
     settings = {}
-    uses_json_files = {'iodepth_numjobs_3d': bar3d.plot_3d, 'latency_iops_2d':
-                       bar2d.chart_2dbarchart_jsonlogdata,
-                       'histogram': histogram.chart_latency_histogram
+    uses_json_files = {'iodepth_numjobs_3d': bar3d.plot_3d,
+                       'latency_iops_2d': bar2d.chart_2dbarchart_jsonlogdata,
+                       'histogram': histogram.chart_latency_histogram,
+                       'compare_graph': bar2d.compchart_2dbarchart_jsonlogdata
                        }
+
     parser = set_arguments()
     try:
         args = parser.parse_args()
@@ -197,13 +203,6 @@ def main():
             # Which function to execute is specified in 'uses_json_files'
             uses_json_files[item](settings, parsed_data)
             option_found = True
-
-    if settings['compare_graph']:
-        list_of_json_files = jsonimport.list_json_files(settings)
-        dataset = jsonimport.import_json_dataset(list_of_json_files)
-        parsed_data = jsonimport.get_flat_json_mapping(settings, dataset)
-        bar2d.compchart_2dbarchart_jsonlogdata(settings, parsed_data)
-        option_found = True
 
     if not option_found:
         parser.print_help()

@@ -5,9 +5,9 @@ import pprint
 
 
 def get_dataset_types(dataset):
-    """ This code is probably insane. 
+    """ This code is probably insane.
     Using only the first item in a list to return because all items should be equal.
-    If not, a warning is displayed. 
+    If not, a warning is displayed.
     """
     dataset_types = {'rw': set(), 'iodepth': set(), 'numjobs': set()}
     operation = {'rw': str, 'iodepth': int, 'numjobs': int}
@@ -57,9 +57,12 @@ def get_record_set_3d(settings, dataset, dataset_types, rw, metric):
     for depth in dataset_types['iodepth']:
         row = []
         for jobs in dataset_types['numjobs']:
-            for record in dataset:
+            for record in dataset[0]['data']:
                 # pprint.pprint(record)
-                if (int(record['iodepth']) == int(depth)) and int(record['numjobs']) == jobs and record['rw'] == rw and record['type'] in settings['filter']:
+                if (int(record['iodepth']) == int(depth)) \
+                        and int(record['numjobs']) == jobs \
+                        and record['rw'] == rw \
+                        and record['type'] in settings['filter']:
                     row.append(record[metric])
         record_set['values'].append(supporting.round_metric_series(row))
     return record_set
