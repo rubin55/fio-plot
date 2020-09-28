@@ -163,9 +163,21 @@ Fio-plot also writes metadata to the PNG files using Pillow
 
 ### Example Usage
 
-Creating a 2D Bar Chart based on randread data and numjobs = 1.
+Creating a 2D Bar Chart based on randread data and numjobs = 1 (default).
 
-    ./fio_plot -i <benchmark_data_folder> -T "Title" -s https://louwrentius.com -l -n 1 -r randread
+    ./fio_plot -i <benchmark_data_folder> -T "Title" -s https://louwrentius.com -l -r randread
+
+Creating a 2D Bar Chart based on randread data and numjobs = 8.
+
+    ./fio_plot -i <benchmark_data_folder> -T "Title" -s https://louwrentius.com -l -n 8 -r randread
+
+Creating a 2D Bar Chart grouping iops and latency data together: 
+
+    ./fio_plot -i <benchmark_data_folder> -T "Title" -s https://louwrentius.com -l -r randread --group-bars
+
+![groupedbars][grouped]
+
+[grouped]: https://louwrentius.com/static/images/iodepthgroupbars.png
 
 Creating a 3D graph showing IOPS. 
 

@@ -143,10 +143,11 @@ def run_preflight_checks(settings):
             sys.exit(1)
 
     if settings['compare_graph']:
-        if len(settings['iodepth']) > 1 or len(settings['numjobs']) > 1:
-            print(
-                f"\nWhen creating a graph to compare values, iodepth or numjobs must be one value.\n")
-            sys.exit(1)
+        if settings['iodepth'] or settings['numjobs']:
+            if len(settings['iodepth']) > 1 or len(settings['numjobs']) > 1:
+                print(
+                    f"\nWhen creating a graph to compare values, iodepth or numjobs must be one value.\n")
+                sys.exit(1)
 
         if len(settings['input_directory']) < 2:
             print("\n When you want to compare two datasets, please specify at least two directories with test data \
