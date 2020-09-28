@@ -34,14 +34,9 @@ def limit_path_part_size(path, length):
 
 
 def return_folder_name(filename, settings):
-
-    depth = settings['label_depth']
-    segment_size = settings['label_segment_size']
-    if not settings['label_include_parent']:
-        raw_path = Path(filename).resolve().parents[0]
-    else:
-        raw_path = Path(filename).resolve()
-
+    depth = settings['xlabel_depth']
+    segment_size = settings['xlabel_segment_size']
+    raw_path = Path(filename).resolve()
     upperpath = raw_path.parents[depth]
     relative_path = raw_path.relative_to(upperpath)
     relative_path_processed = limit_path_part_size(

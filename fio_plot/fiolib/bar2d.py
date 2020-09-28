@@ -78,7 +78,9 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
     title = settings['title'].replace(" ", '-')
     title = title.replace("/", '-')
     plt.tight_layout(rect=[0, 0, 1, 1])
-    fig.savefig(f"{title}_{now}.png", dpi=settings['dpi'])
+    savename = f"{title}_{now}.png"
+    fig.savefig(savename, dpi=settings['dpi'])
+    supporting.write_png_metadata(savename, settings)
 
 
 def compchart_2dbarchart_jsonlogdata(settings, dataset):
@@ -155,4 +157,6 @@ def compchart_2dbarchart_jsonlogdata(settings, dataset):
     title = settings['title'].replace(" ", '-')
     title = title.replace("/", '-')
     plt.tight_layout(rect=[0, 0, 1, 1])
-    fig.savefig(f"{title}_{now}.png", dpi=settings['dpi'])
+    savename = f"{title}_{now}.png"
+    fig.savefig(savename, dpi=settings['dpi'])
+    supporting.write_png_metadata(savename, settings)

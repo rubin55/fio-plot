@@ -83,7 +83,8 @@ def set_arguments():
     ag.add_argument("-n", "--numjobs", nargs='+', help="\
             Specifies for which numjob parameter you want the 2d graphs to be\
                  generated. You can specify multiple values separated by spaces.", default=[1], type=int)
-    ag.add_argument("-r", "--rw", choices=['read', 'write', 'randread', 'randwrite', 'randrw', 'trim', 'rw', 'randtrim', 'trimwrite'], required=True,
+    ag.add_argument("-r", "--rw", choices=['read', 'write', 'randread', 'randwrite', 'randrw',
+                                           'trim', 'rw', 'randtrim', 'trimwrite'], required=True,
                     help="Specifies the kind of data you want to graph.")
     ag.add_argument("-m", "--max", default=None, type=int,
                     help="Optional maximum value for Z-axis in 3D graph.")
@@ -98,12 +99,16 @@ def set_arguments():
     ag.add_argument("-f", "--filter", nargs='+', help="\
             filter should be read/write.", type=str, default=('read', 'write'),
                     choices=['read', 'write'])
-    ag.add_argument("-c", "--label-depth", help="\
-            use the parent folder(s) to make the label unique. The number represents how many folders up should be included.", type=int, default=1)
-    ag.add_argument("--label-include-parent", help="Do we include the folder containing the files into the label or do we start higer?",
-                    action='store_true')
-    ag.add_argument("--label-segment-size", help="\
-            Truncate folder names to make labels fit the graph. Disabled by default. The number represents how many characters per segment are preserved. Used with -g.", type=int, default=1000)
+    ag.add_argument("--xlabel-depth", help="\
+            Can be used to truncate the most significant folder name from the label. \
+                Often used to strip off folders generated with benchfio (e.g. 4k)", type=int, default=0)
+    ag.add_argument("--xlabel-parent", help="\
+            use the parent folder(s) to make the label unique. The number\
+                 represents how many folders up should be included. Default is 1. Use a value of \
+                     0 to remove parent folder name.", type=int, default=1)
+    ag.add_argument("--xlabel-segment-size", help="\
+            Truncate folder names to make labels fit the graph. Disabled by default. \
+                The number represents how many characters per segment are preserved. Used with -g.", type=int, default=1000)
     ag.add_argument("-w", "--line-width",
                     help="Line width for line graphs. Can be a floating-point value. Used with -g.", type=float, default=1)
 
@@ -138,6 +143,11 @@ def run_preflight_checks(settings):
     if settings['latency_iops_2d']:
         if len(settings['input_directory']) > 1:
             print("\nIf -l is specified, only one input directory can be used.\n")
+            sys.exit(1)
+    if settings['compare_graph']:
+        if len(settings['input_directory']) < 2:
+            print("\n When you want to compare two datasets, please specify at least two directories with test data \
+                using the -i parameter\n")
             sys.exit(1)
 
 
