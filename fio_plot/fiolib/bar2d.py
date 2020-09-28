@@ -18,46 +18,33 @@ def create_bars_and_xlabels(settings, data, ax1, ax3):
     latency = np.array(data['y2_axis']['data'], dtype=float)
     width = 0.9
 
+    color_iops = '#a8ed63'
+    color_lat = '#34bafa'
+
     if settings['group_bars']:
-        #
-        # Creating the bars and chart
         x_pos1 = np.arange(1, len(iops) + 1, 1)
         x_pos2 = np.arange(len(iops) + 1, len(iops) + len(latency) + 1, 1)
 
-        rects1 = ax1.bar(x_pos1, iops, width, color='#a8ed63')
-        rects2 = ax3.bar(x_pos2, latency, width, color='#34bafa')
-
-        #
-        # Configure axis labels and ticks
-        ax1.set_ylabel(data['y1_axis']['format'])
-        ax3.set_ylabel(data['y2_axis']['format'])
+        rects1 = ax1.bar(x_pos1, iops, width, color=color_iops)
+        rects2 = ax3.bar(x_pos2, latency, width, color=color_lat)
 
         x_axis = data['x_axis'] * 2
         ltest = np.arange(1, len(x_axis)+1, 1)
-        ax1.set_xticks(ltest)
-        ax1.set_xticklabels(x_axis)
 
     else:
-        #
-        # Creating the bars and chart
         x_pos = np.arange(0, (len(iops) * 2), 2)
 
-        # x_pos = np.arange(0, len(data['x_axis']))
+        rects1 = ax1.bar(x_pos, iops, width, color=color_iops)
+        rects2 = ax3.bar(x_pos+width, latency, width, color=color_lat)
 
-        rects1 = ax1.bar(x_pos, iops, width, color='#a8ed63')
-        rects2 = ax3.bar(x_pos+width, latency, width, color='#34bafa')
-
-        #
-        # Configure axis labels and ticks
-        ax1.set_ylabel(data['y1_axis']['format'])
-        ax3.set_ylabel(data['y2_axis']['format'])
-
-        # We need the X-axis values twice, for both IOPs and latency
         x_axis = data['x_axis']
         ltest = np.arange(0.45, (len(iops) * 2), 2)
-        print(ltest)
-        ax1.set_xticks(ltest)
-        ax1.set_xticklabels(x_axis)
+
+    ax1.set_ylabel(data['y1_axis']['format'])
+    ax3.set_ylabel(data['y2_axis']['format'])
+
+    ax1.set_xticks(ltest)
+    ax1.set_xticklabels(x_axis)
 
     return_data['rects1'] = rects1
     return_data['rects2'] = rects2

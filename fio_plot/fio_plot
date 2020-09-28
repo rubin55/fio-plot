@@ -70,7 +70,7 @@ def set_arguments():
     ag.add_argument("--subtitle", help="\
             Specify your own subtitle or leave it blank with double quotes.", type=str, default=None)
     ag.add_argument("-d", "--iodepth", type=int, nargs='+', default=[1], help="\
-            The I/O queue depth to graph.")
+            The I/O queue depth to graph. You can specify multiple values separated by spaces.")
     ag.add_argument("-M", "--maxdepth", nargs='?', default=64, type=int, help="\
             Maximum queue depth to graph in 3D graph.")
     ag.add_argument("-D", "--dpi", help="\
@@ -144,14 +144,14 @@ def run_preflight_checks(settings):
                 f"\nWhen creating a graph to compare values, iodepth or numjobs must be one value.\n")
             sys.exit(1)
 
+        if len(settings['input_directory']) < 2:
+            print("\n When you want to compare two datasets, please specify at least two directories with test data \
+            using the -i parameter\n")
+            sys.exit(1)
+
     if settings['latency_iops_2d']:
         if len(settings['input_directory']) > 1:
             print("\nIf -l is specified, only one input directory can be used.\n")
-            sys.exit(1)
-    if settings['compare_graph']:
-        if len(settings['input_directory']) < 2:
-            print("\n When you want to compare two datasets, please specify at least two directories with test data \
-                using the -i parameter\n")
             sys.exit(1)
 
 

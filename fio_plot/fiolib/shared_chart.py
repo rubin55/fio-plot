@@ -58,6 +58,7 @@ def get_record_set_3d(settings, dataset, dataset_types, rw, metric):
         row = []
         for jobs in dataset_types['numjobs']:
             for record in dataset:
+                # pprint.pprint(record)
                 if (int(record['iodepth']) == int(depth)) and int(record['numjobs']) == jobs and record['rw'] == rw and record['type'] in settings['filter']:
                     row.append(record[metric])
         record_set['values'].append(supporting.round_metric_series(row))
