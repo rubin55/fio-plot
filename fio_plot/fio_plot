@@ -112,7 +112,9 @@ def set_arguments():
             Truncate folder names to make labels fit the graph. Disabled by default. \
                 The number represents how many characters per segment are preserved. Used with -g.", type=int, default=1000)
     ag.add_argument("-w", "--line-width",
-                    help="Line width for line graphs. Can be a floating-point value. Used with -g.", type=float, default=1)
+                    help="Line width for line graphs. Can be a floating-point value. Used with -g.", type=float, default=1),
+    ag.add_argument("--group-bars",
+                    help="When using -l or -C, bars are grouped together by iops/lat type.", action='store_true')
 
     return parser
 

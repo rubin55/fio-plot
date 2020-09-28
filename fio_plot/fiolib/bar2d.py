@@ -7,6 +7,66 @@ from datetime import datetime
 import fiolib.shared_chart as shared
 
 
+def create_bars_and_xlabels(settings, data, ax1, ax3):
+
+    return_data = {'ax1': None,
+                   'ax3': None,
+                   'rects1': None,
+                   'rects2': None}
+
+    iops = data['y1_axis']['data']
+    latency = np.array(data['y2_axis']['data'], dtype=float)
+    width = 0.9
+
+    if settings['group_bars']:
+        #
+        # Creating the bars and chart
+        x_pos1 = np.arange(1, len(iops) + 1, 1)
+        x_pos2 = np.arange(len(iops) + 1, len(iops) + len(latency) + 1, 1)
+
+        rects1 = ax1.bar(x_pos1, iops, width, color='#a8ed63')
+        rects2 = ax3.bar(x_pos2, latency, width, color='#34bafa')
+
+        #
+        # Configure axis labels and ticks
+        ax1.set_ylabel(data['y1_axis']['format'])
+        ax3.set_ylabel(data['y2_axis']['format'])
+
+        x_axis = data['x_axis'] * 2
+        ltest = np.arange(1, len(x_axis)+1, 1)
+        ax1.set_xticks(ltest)
+        ax1.set_xticklabels(x_axis)
+
+    else:
+        #
+        # Creating the bars and chart
+        x_pos = np.arange(0, (len(iops) * 2), 2)
+
+        # x_pos = np.arange(0, len(data['x_axis']))
+
+        rects1 = ax1.bar(x_pos, iops, width, color='#a8ed63')
+        rects2 = ax3.bar(x_pos+width, latency, width, color='#34bafa')
+
+        #
+        # Configure axis labels and ticks
+        ax1.set_ylabel(data['y1_axis']['format'])
+        ax3.set_ylabel(data['y2_axis']['format'])
+
+        # We need the X-axis values twice, for both IOPs and latency
+        x_axis = data['x_axis']
+        ltest = np.arange(0.45, (len(iops) * 2), 2)
+        print(ltest)
+        ax1.set_xticks(ltest)
+        ax1.set_xticklabels(x_axis)
+
+    return_data['rects1'] = rects1
+    return_data['rects2'] = rects2
+    return_data['ax1'] = ax1
+    return_data['ax3'] = ax3
+
+    return return_data
+
+
 def chart_2dbarchart_jsonlogdata(settings, dataset):
     """This function is responsible for drawing iops/latency bars for a
     particular iodepth."""
@@ -25,29 +85,13 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
                  transform=ax1.transAxes, fontsize=9)
 
     ax2.axis('off')
-    iops = data['y1_axis']['data']
-    latency = np.array(data['y2_axis']['data'], dtype=float)
 
-    #
-    # Creating the bars and chart
-    x_pos1 = np.arange(1, len(iops) + 1, 1)
-    x_pos2 = np.arange(len(iops) + 1, len(iops) + len(latency) + 1, 1)
-    # x_pos = np.arange(0, len(data['x_axis']))
-    width = 0.9
+    return_data = create_bars_and_xlabels(settings, data, ax1, ax3)
 
-    rects1 = ax1.bar(x_pos1, iops, width, color='#a8ed63')
-    rects2 = ax3.bar(x_pos2, latency, width, color='#34bafa')
-
-    #
-    # Configure axis labels and ticks
-    ax1.set_ylabel(data['y1_axis']['format'])
-    # ax1.set_xlabel(data['x_axis_format'])
-    ax3.set_ylabel(data['y2_axis']['format'])
-
-    x_axis = data['x_axis'] * 2
-    ltest = np.arange(1, len(x_axis)+1, 1)
-    ax1.set_xticks(ltest)
-    ax1.set_xticklabels(x_axis)
+    rects1 = return_data['rects1']
+    rects2 = return_data['rects2']
+    ax1 = return_data['ax1']
+    ax3 = return_data['ax3']
 
     #
     # Set title
@@ -81,7 +125,6 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
     savename = f"{title}_{now}.png"
     fig.savefig(savename, dpi=settings['dpi'])
     supporting.write_png_metadata(savename, settings)
-<<<<<<< HEAD
 
 
 def compchart_2dbarchart_jsonlogdata(settings, dataset):
@@ -110,28 +153,11 @@ def compchart_2dbarchart_jsonlogdata(settings, dataset):
     iops = data['y1_axis']['data']
     latency = np.array(data['y2_axis']['data'], dtype=float)
 
-    #
-    # Creating the bars and chart
-    x_pos1 = np.arange(1, len(iops) + 1, 1)
-    x_pos2 = np.arange(len(iops) + 1, len(iops) + len(latency) + 1, 1)
-    # x_pos = np.arange(0, len(data['x_axis']))
-    width = 0.9
-
-    rects1 = ax1.bar(x_pos1, iops, width, color='#a8ed63')
-    rects2 = ax3.bar(x_pos2, latency, width, color='#34bafa')
-
-    #
-    # Configure axis labels and ticks
-    ax1.set_ylabel(data['y1_axis']['format'])
-    # ax1.set_xlabel(data['x_axis_format'])
-    ax3.set_ylabel(data['y2_axis']['format'])
-
-    # We need the X-axis values twice, for both IOPs and latency
-    x_axis = data['x_axis'] * 2
-
-    ltest = np.arange(1, len(x_axis)+1, 1)
-    ax1.set_xticks(ltest)
-    ax1.set_xticklabels(x_axis)
+    return_data = create_bars_and_xlabels(settings, data, ax1, ax3)
+    rects1 = return_data['rects1']
+    rects2 = return_data['rects2']
+    ax1 = return_data['ax1']
+    ax3 = return_data['ax3']
     #
     # Set title
     settings['type'] = ""
@@ -161,5 +187,3 @@ def compchart_2dbarchart_jsonlogdata(settings, dataset):
     savename = f"{title}_{now}.png"
     fig.savefig(savename, dpi=settings['dpi'])
     supporting.write_png_metadata(savename, settings)
-=======
->>>>>>> master
