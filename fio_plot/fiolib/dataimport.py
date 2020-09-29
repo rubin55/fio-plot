@@ -36,15 +36,20 @@ def limit_path_part_size(path, length):
 def return_folder_name(filename, settings, override=False):
     segment_size = settings['xlabel_segment_size']
     parent = settings['xlabel_parent']
+    child = settings['xlabel_depth']
 
     raw_path = Path(filename).resolve()
 
     if override:
         raw_path = raw_path.parent
 
+    if child > 0:
+        raw_path = raw_path.parents[child-1]
+
     upperpath = raw_path.parents[parent]
 
     relative_path = raw_path.relative_to(upperpath)
+
     relative_path_processed = limit_path_part_size(
         relative_path, segment_size)
     return relative_path_processed

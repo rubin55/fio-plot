@@ -254,6 +254,33 @@ This would look like:
 
 [labellength]: https://louwrentius.com/static/images/labellength.png
 
+Some additional examples to explain how you can trim the labels to contain exactly the directories you want:
+
+The default:
+
+    RAID10/4k
+
+Is equivalent to --xlabel-parent 1 --xlabel-depth 0. So by default, the parent folder is included. 
+If you strip off the 4k folder with --xlabel-depth 1, you'll notice that the label becomes:
+
+    IBM1015/RAID10 
+
+This is because the default --xlabel-parent is 1 and the index now starts at 'RAID10'. 
+
+If you want to strip off the 4k folder but not include the IBM1015 folder, you need to be explicit about that:
+
+    --xlabel-parent 0 --xlabel-depth 1 
+
+Results in:
+
+    RAID10
+
+Example:
+
+![shortlabel][shortlabel]
+
+[shortlabel]: https://louwrentius.com/static/images/shortlabel.png
+
 ### JSON / LOG file name requirements
 
 Fio-plot parses the filename of the generated .log files. The format is:
@@ -294,7 +321,7 @@ This is a fragment of the output:
         enable_markers: False
         filter: ('read', 'write')
         histogram: False
-        input_directory: /Users/MyUserName/data/WDRAID5/Users/MyUserName/data/WDRAID10
+        input_directory: /Users/MyUserName/data/WDRAID5 /Users/MyUserName/data/WDRAID10
         iodepth: 16
         iodepth_numjobs_3d: False
         latency_iops_2d: False

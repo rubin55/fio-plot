@@ -368,7 +368,7 @@ def write_png_metadata(filename, settings):
         if type(v) == list:
             value = ""
             for item in v:
-                value += str(item)
+                value += str(item) + " "
             v = value
         if type(v) == bool:
             v = str(v)
