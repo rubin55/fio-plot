@@ -22,6 +22,12 @@ This kind of chart shows both IOPs and Latency for multiple queue depths.
 
 [queuedepthlowhigh01]: https://louwrentius.com/static/images/impactofqueuedepth.png
 
+### 2D chart to compare benchmark results
+
+The compare chart shows the results from multiple benchmark in one graph. 
+
+![shortlabel][shortlabel]
+
 ### 3D chart
 A 3D bar chart that plots both queue depth an numjobs against either latency or IOPs.
 
