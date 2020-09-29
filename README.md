@@ -203,7 +203,23 @@ The same result but if you want markers to help distinguish between lines:
 
     ./fio_plot -i <benchmark_data_folder>  -T "Test" -g -r randread -t iops lat -d 1 8 16 -n 1 --enable--markers
 
-### Comparing two benchmarks in a single chart
+### Comparing two or more benchmarks based on JSON data (2d Bar Chart):
+
+A simple example where we compare the iops and latency of a particular iodepth and numjobs value:
+
+    ./fio_plots -i <folder_a> <folder_b> <folder_c> -T "Test" -C -r randwrite -d 8 
+
+![compare01][compare01]
+
+[compare01]: https://louwrentius.com/static/images/compareexample01.png 
+
+The bars can also be grouped: 
+
+![compare02][compare02]
+
+[compare02]: https://louwrentius.com/static/images/compareexample02.png 
+
+### Comparing two or more benchmarks in a single line chart
 
 Create a line chart based on data from two different folders (but the same benchmark parameters)     
 
@@ -228,9 +244,9 @@ If you use the bench_fio tool to generate benchmark data, you may notice that yo
     IBM1015/RAID10/4k
     IBM1015/RAID5/4k
 
-Those parent folders are used to distinguish and identify the lines from each other. The labels are based on the parent folder names as you can see in the graph. By default, we use only one level deep, so in this example only RAID10/4k or RAID5/4k are used. If we want to include the folder above that (IBM1015) we use the --label-depth parameter like so:
+Those parent folders are used to distinguish and identify the lines from each other. The labels are based on the parent folder names as you can see in the graph. By default, we use only one level deep, so in this example only RAID10/4k or RAID5/4k are used. If we want to include the folder above that (IBM1015) we use the --xlabel-parent parameter like so:
 
-    fio_plot -i ./IBM1015/RAID10/4k/ ./IBM1015/RAID5/4k/ -T "Comparing RAID 10 vs. RAID 5 on 10,000 RPM Drives" -s https://louwrentius.com -g -r randread -t iops lat -d 8 -n 1 -w 1 --label-depth 2
+    fio_plot -i ./IBM1015/RAID10/4k/ ./IBM1015/RAID5/4k/ -T "Comparing RAID 10 vs. RAID 5 on 10,000 RPM Drives" -s https://louwrentius.com -g -r randread -t iops lat -d 8 -n 1 -w 1 --xlabel-parent 2
 
 This would look like: 
 
