@@ -215,9 +215,9 @@ A simple example where we compare the iops and latency of a particular iodepth a
 
 The bars can also be grouped: 
 
-![compare02][compare02]
+![compare03][compare03]
 
-[compare02]: https://louwrentius.com/static/images/compareexample02.png 
+[compare03]: https://louwrentius.com/static/images/compareexample03.png 
 
 ### Comparing two or more benchmarks in a single line chart
 
