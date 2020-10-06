@@ -1,7 +1,7 @@
-*.swp
-*.pyc
-*.pyo
-.DS_Store
+**/*.swp
+**/*.pyc
+**/*.pyo
+**/.DS_Store
 __pycache__/
 test
 tmp
